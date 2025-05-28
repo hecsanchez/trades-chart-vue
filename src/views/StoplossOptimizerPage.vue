@@ -46,7 +46,6 @@ import ErrorBanner from '@/components/ErrorBanner.vue'
 import MaePnlScatterChart from '@/components/MaePnlScatterChart.vue'
 import PnlCurveChart from '@/components/PnlCurveChart.vue'
 import EvWinrateChart from '@/components/EvWinrateChart.vue'
-import InfoBox from '@/components/InfoBox.vue'
 import PnlToggle from '@/components/PnlToggle.vue'
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
 
@@ -118,10 +117,10 @@ const fetchData = async () => {
     }
 
     // Convert ev_by_mae and mae_levels arrays into the expected format
-    if (Array.isArray(data.data.ev_by_mae) && Array.isArray(data.data.mae_levels)) {
+    if (data.data && Array.isArray(data.data.ev_by_mae) && Array.isArray(data.data.mae_levels)) {
       const evByMaeObj: EvByMae = {}
       data.data.mae_levels.forEach((mae, index) => {
-        if (data.data.ev_by_mae[index] !== null) {
+        if (data.data && data.data.ev_by_mae[index] !== null) {
           evByMaeObj[mae] = {
             ev: data.data.ev_by_mae[index],
             winrate: data.data.recovery_rate_by_mae[index],

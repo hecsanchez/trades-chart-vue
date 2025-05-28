@@ -50,8 +50,6 @@ import { Chart } from 'highcharts-vue'
 import type Highcharts from 'highcharts'
 import type {
   SeriesStatesHoverOptionsObject,
-  SeriesBubbleOptions,
-  PointClickEventObject,
   AxisLabelsFormatterContextObject,
   SeriesClickCallbackFunction,
   Point,
@@ -59,7 +57,6 @@ import type {
   SeriesScatterOptions,
   OptionsChartZoomingTypeValue,
   PointOptionsObject,
-  TooltipFormatterContextObject,
 } from 'highcharts'
 
 // Register Highcharts modules
@@ -307,7 +304,7 @@ const chartOptions = computed(() => ({
     },
     gridLineWidth: 1,
     gridLineColor: 'rgba(255,255,255,0.08)',
-    gridLineDashStyle: 'Dot',
+    gridLineDashStyle: 'Dot' as Highcharts.DashStyleValue,
     tickAmount: 10,
     labels: {
       formatter: function (this: AxisLabelsFormatterContextObject): string {
@@ -331,7 +328,7 @@ const chartOptions = computed(() => ({
     },
     gridLineWidth: 1,
     gridLineColor: 'rgba(255,255,255,0.08)',
-    gridLineDashStyle: 'Dot',
+    gridLineDashStyle: 'Dot' as Highcharts.DashStyleValue,
     labels: {
       formatter: yAxisFormatter.value,
       style: { color: '#676768' },
@@ -376,8 +373,8 @@ const chartOptions = computed(() => ({
     followPointer: true,
     backgroundColor: '#23262F',
     style: { color: '#fff' },
-    formatter: function (this: { point: Point & { trade?: Trade } }) {
-      const point = this.point
+    formatter: function (this: any) {
+      const point = this.point as Point & { trade?: Trade }
       const mae = typeof point.x === 'number' ? point.x.toFixed(2) : '0.00'
       const pnl =
         typeof point.y === 'number'
@@ -404,14 +401,14 @@ const chartOptions = computed(() => ({
   },
   series: [
     {
-      type: 'bubble',
+      type: 'bubble' as const,
       name: 'Winning trades',
       data: winningTradesData.value,
       color: '#7ec6a2',
       marker: { symbol: 'circle' },
     },
     {
-      type: 'bubble',
+      type: 'bubble' as const,
       name: 'Losing trades',
       data: losingTradesData.value,
       color: '#d1787c',
@@ -472,8 +469,9 @@ const chartOptions = computed(() => ({
             console.log('Drag', e.newPoints)
           },
           drop: function (this: Highcharts.Series, e: { newPoints: Point[] }) {
-            console.log('Drag end', Object.values(e.newPoints)[0].newValues.x)
-            emit('update:stoploss', Object.values(e.newPoints)[0].newValues.x)
+            const newX = e.newPoints[0]?.x
+            console.log('Drag end', newX)
+            emit('update:stoploss', newX)
           },
         },
       },

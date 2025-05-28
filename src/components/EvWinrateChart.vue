@@ -109,11 +109,11 @@ const chartOptions = computed(() => ({
     },
     gridLineWidth: 1,
     gridLineColor: 'rgba(255,255,255,0.08)',
-    gridLineDashStyle: 'Dot',
+    gridLineDashStyle: 'Dot' as Highcharts.DashStyleValue,
     tickAmount: 5,
     labels: {
-      formatter: function (this: { value: number }): string {
-        return this.value + '%'
+      formatter: function (this: Highcharts.AxisLabelsFormatterContextObject): string {
+        return (typeof this.value === 'number' ? this.value : parseFloat(this.value)) + '%'
       },
       style: { color: '#676768' },
     },
@@ -129,10 +129,11 @@ const chartOptions = computed(() => ({
       },
       gridLineWidth: 1,
       gridLineColor: 'rgba(255,255,255,0.08)',
-      gridLineDashStyle: 'Dot',
+      gridLineDashStyle: 'Dot' as Highcharts.DashStyleValue,
       labels: {
-        formatter: function (this: { value: number }): string {
-          return '$' + this.value.toLocaleString()
+        formatter: function (this: Highcharts.AxisLabelsFormatterContextObject): string {
+          const val = typeof this.value === 'number' ? this.value : parseFloat(this.value)
+          return '$' + val.toLocaleString()
         },
         style: { color: '#676768' },
       },
@@ -148,8 +149,8 @@ const chartOptions = computed(() => ({
       opposite: true,
       gridLineWidth: 0,
       labels: {
-        formatter: function (this: { value: number }): string {
-          return this.value + '%'
+        formatter: function (this: Highcharts.AxisLabelsFormatterContextObject): string {
+          return (typeof this.value === 'number' ? this.value : parseFloat(this.value)) + '%'
         },
       },
       max: 100,
@@ -184,7 +185,7 @@ const chartOptions = computed(() => ({
   },
   series: [
     {
-      type: 'line',
+      type: 'line' as const,
       name: 'Expected Value',
       data: chartData.value.ev,
       color: '#65C49D',
@@ -192,7 +193,7 @@ const chartOptions = computed(() => ({
       yAxis: 0,
     } as SeriesLineOptions,
     {
-      type: 'line',
+      type: 'line' as const,
       name: 'Win Rate',
       data: chartData.value.winrate,
       color: '#DE576F',
@@ -240,9 +241,8 @@ watch(
   [() => props.evByMae, () => props.selectedStoploss],
   () => {
     if (chartOptions.value.series?.[0] && chartOptions.value.series?.[1]) {
-      ;(chartOptions.value.series[0] as SeriesLineOptions).data = chartData.value.ev(
-        chartOptions.value.series[1] as SeriesLineOptions,
-      ).data = chartData.value.winrate
+      ;(chartOptions.value.series[0] as SeriesLineOptions).data = chartData.value.ev
+      ;(chartOptions.value.series[1] as SeriesLineOptions).data = chartData.value.winrate
     }
   },
   { deep: true },
